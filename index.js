@@ -17,6 +17,20 @@
  */
 
 // Створюємо об'єкт Book
+const Book = {
+  title: "Загальна Книга",
+  author: "Анонім",
+  pages: 0,
+  read() {
+    return `Ви читаєте "${this.title}" від ${this.author}`;
+  },
+};
+
+const proBook = Object.create(Book);
+
+console.log(Book); // {....}
+console.log(Book.isPrototypeOf(proBook)); // true
+console.log(Book.read()); //Ви читаєте "Загальна Книга" від Анонім
 
 console.log("Завдання: 1 ==============================");
 
@@ -41,6 +55,12 @@ console.log("Завдання: 1 ==============================");
 
 // Додаємо властивість genre
 
+const Novel = Object.create(Book);
+Novel.genre = "Новела";
+
+console.log(Novel); // { title: 'Загальна Біографія', author: 'Біограф', pages: 200 }
+console.log(Object.getPrototypeOf(Novel)); // true
+
 console.log("Завдання: 2 ==============================");
 
 // Виводимо в консоль Об'єкт: Novel
@@ -63,6 +83,17 @@ console.log("Завдання: 2 ==============================");
 // Створюємо об'єкт Biography
 
 // Змінемо прототип об'єкта Biography на Novel
+
+const Biography = {
+  title: "Загальна Біографія",
+  author: "Біограф",
+  pages: 200,
+};
+const proBiography = Object.create(Biography);
+Object.setPrototypeOf(proBiography, Novel);
+
+console.log(Biography); // Про книгу "Фізика 101": написана в 1915 році
+console.log(Novel.isPrototypeOf(proBiography)); //{ get: [Function: get], set: [Function: set], enumerable: false, configurable: false}
 
 console.log("Завдання: 3 ==============================");
 // Виводимо в консоль Об'єкт: Biography
@@ -94,6 +125,27 @@ console.log("Завдання: 3 ==============================");
 // | author      | "Альберт Ейнштейн"   |
 // | info        | написана в 1915 році |
 
+const ScienceBook = Object.create(Book);
+Object.defineProperty(ScienceBook, `info`, {
+  value: "написана в 1915 році",
+  writable: false,
+  configurable: false,
+});
+//console.log(ScienceBook.info); // Отримаємо помилку Cannot assign to read only property 'info' of object '#<Object>'
+Object.defineProperty(ScienceBook, `info2`, {
+  set(value) {
+    this.info = value;
+  },
+  get() {
+    return `Про книгу "${this.title}": ${this.info}`;
+  },
+});
+ScienceBook.title = "Фізика 101";
+ScienceBook.author = "Альберт Ейнштейн";
+
+console.log(ScienceBook.info2); //Про книгу "Фізика 101": написана в 1915 році
+console.log(Object.getOwnPropertyDescriptor(ScienceBook, "info2")); // {.....}
+
 console.log("Завдання: 4 ==============================");
 // Виводимо в консоль властивість info
 
@@ -117,6 +169,16 @@ console.log("Завдання: 4 ==============================");
 // | title       | "Фізика у Вищій Школі"     |
 // | author      | "Дж. Д. Джонс"             |
 
+const Textbook = Object.create(ScienceBook);
+
+Textbook.title = "Фізика у Вищій Школі";
+Textbook.author = "Дж. Д. Джонс";
+Textbook.read = function () {
+  return `Ви читаєте підручник "${this.title}" від ${this.author}. ${this.info2}.`;
+};
+console.log(Textbook.read()); // Ви читаєте підручник "Фізика у Вищій Школі"
+// від Дж. Д. Джонс. Про книгу "Фізика у Вищій Школі": написана в 1915 році.
+
 console.log("Завдання: 5 ==============================");
 // Викликаємо функцію read об'єкту Textbook
 
@@ -138,6 +200,15 @@ console.log("Завдання: 5 ==============================");
  */
 
 // Створюємо об'єкт Media
+const Media = {
+  format: "Загальний Формат",
+  length: 0,
+  play() {
+    console.log(
+      `Зараз відтворюється медіа у форматі "${this.format}" з тривалістю ${this.length} секунд`
+    );
+  },
+};
 
 /*
  * Об'єкт: Song
@@ -146,12 +217,16 @@ console.log("Завдання: 5 ==============================");
  */
 
 // Створюємо об'єкт Song, наслідуємо властивості і функції від об'єкта Media
-
+const Song = Object.create(Media);
+Song.artist = "Загальний Виконавець";
+Song.title = "Загальна Пісня";
 // Встановлюємо додаткові властивості
 // | Властивість | Значення               |
 // |-------------|------------------------|
 // | artist      | "Загальний Виконавець" |
 // | title       | "Загальна Пісня"       |
+
+Song.play(); // Зараз відтворюється медіа у форматі "Загальний Формат" з тривалістю 0 секунд
 
 console.log("Завдання: 6 ==============================");
 // Викликаємо функцію play об'єкту Song
